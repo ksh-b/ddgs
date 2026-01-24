@@ -7,20 +7,28 @@ import 'dart:io';
 import 'package:args/args.dart';
 import 'package:ddgs/ddgs.dart';
 
-const String version = '9.6.0';
+const String version = '0.3.2';
 
 void main(List<String> arguments) async {
   final parser = ArgParser()
-    ..addCommand('text')
-    ..addCommand('images')
     ..addCommand('videos')
     ..addCommand('news')
     ..addCommand('books')
+    ..addCommand('maps')
+    ..addCommand('translate')
     ..addFlag('version', abbr: 'v', negatable: false, help: 'Print version')
     ..addFlag('help', abbr: 'h', negatable: false, help: 'Print help');
 
   // Setup common options for all commands
-  for (final cmd in ['text', 'images', 'videos', 'news', 'books']) {
+  for (final cmd in [
+    'text',
+    'images',
+    'videos',
+    'news',
+    'books',
+    'maps',
+    'translate'
+  ]) {
     parser.commands[cmd]!
       ..addOption('query', abbr: 'q', help: 'Search query', mandatory: true)
       ..addOption(
@@ -101,6 +109,8 @@ void printUsage(ArgParser parser) {
     ..writeln('  videos    Video search')
     ..writeln('  news      News search')
     ..writeln('  books     Books search')
+    ..writeln('  maps      Maps search')
+    ..writeln('  translate Translation search')
     ..writeln()
     ..writeln('Options:')
     ..writeln(parser.usage)
@@ -175,6 +185,26 @@ Future<void> executeCommand(ArgResults command) async {
         break;
       case 'books':
         results = await ddgs.books(
+          query,
+          region: region,
+          safesearch: safesearch,
+          maxResults: maxResults,
+          page: page,
+          backend: backend,
+        );
+        break;
+      case 'maps':
+        results = await ddgs.maps(
+          query,
+          region: region,
+          safesearch: safesearch,
+          maxResults: maxResults,
+          page: page,
+          backend: backend,
+        );
+        break;
+      case 'translate':
+        results = await ddgs.translate(
           query,
           region: region,
           safesearch: safesearch,

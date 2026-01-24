@@ -99,7 +99,10 @@ ddgs/
 ├── bin/
 │   └── ddgs.dart                   # CLI implementation
 ├── test/
-│   └── ddgs_test.dart             # Unit tests
+│   ├── unit/                      # Unit tests (mocks)
+│   ├── integration/               # Integration tests (live API)
+│   ├── mocks/                     # Shared mocks
+│   └── fixtures/                  # Test data files
 └── example/
     └── example.dart               # Usage examples
 ```
@@ -134,23 +137,22 @@ class NewEngine extends BaseSearchEngine {
 
 ## Testing
 
-- Write unit tests for all new features
-- Maintain or improve code coverage
-- Test edge cases and error conditions
-- Use meaningful test descriptions
+We use `mocktail` for mocking and separate unit tests from integration tests.
+
+- **Unit Tests**: Place in `test/unit/`. These should be fast, deterministic, and mock all external dependencies (HTTP calls).
+- **Integration Tests**: Place in `test/integration/`. These interact with real APIs and should be marked with `skip` by default or tagged.
 
 ```dart
+// Example Unit Test
 import 'package:test/test.dart';
-import 'package:ddgs/ddgs.dart';
+import 'package:mocktail/mocktail.dart';
+import '../mocks/mock_http_client.dart';
 
 void main() {
-  group('Feature tests', () {
-    test('should handle normal case', () {
-      // Test implementation
-    });
-
-    test('should handle edge case', () {
-      // Test implementation
+  group('Feature', () {
+    test('unit test using mocks', () {
+      final mock = MockClient();
+      // ...
     });
   });
 }

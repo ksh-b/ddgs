@@ -2,11 +2,9 @@
 library;
 
 import 'dart:async';
-import 'search_result.dart';
 
 /// Represents a chunk of search results with metadata.
-class SearchResultChunk<T extends SearchResult> {
-
+class SearchResultChunk<T> {
   const SearchResultChunk({
     required this.results,
     required this.engine,
@@ -14,6 +12,7 @@ class SearchResultChunk<T extends SearchResult> {
     this.totalResultsSoFar = 0,
     this.fetchDuration = Duration.zero,
   });
+
   /// The results in this chunk.
   final List<T> results;
 
@@ -36,7 +35,6 @@ class SearchResultChunk<T extends SearchResult> {
 
 /// Progress information for streaming searches.
 class SearchProgress {
-
   const SearchProgress({
     required this.enginesQueried,
     required this.totalEngines,
@@ -45,6 +43,7 @@ class SearchProgress {
     this.failedEngines = const [],
     this.status = '',
   });
+
   /// Number of engines queried so far.
   final int enginesQueried;
 
@@ -76,32 +75,31 @@ class SearchProgress {
 }
 
 /// Event types for streaming search.
-sealed class SearchEvent<T extends SearchResult> {
+sealed class SearchEvent<T> {
   const SearchEvent();
 }
 
 /// New results received event.
-class ResultsEvent<T extends SearchResult> extends SearchEvent<T> {
+class ResultsEvent<T> extends SearchEvent<T> {
   const ResultsEvent(this.chunk);
   final SearchResultChunk<T> chunk;
 }
 
 /// Progress update event.
-class ProgressEvent<T extends SearchResult> extends SearchEvent<T> {
+class ProgressEvent<T> extends SearchEvent<T> {
   const ProgressEvent(this.progress);
   final SearchProgress progress;
 }
 
 /// Error event (non-fatal, search continues).
-class ErrorEvent<T extends SearchResult> extends SearchEvent<T> {
+class ErrorEvent<T> extends SearchEvent<T> {
   const ErrorEvent(this.engine, this.error);
   final String engine;
   final String error;
 }
 
 /// Search completed event.
-class CompletedEvent<T extends SearchResult> extends SearchEvent<T> {
-
+class CompletedEvent<T> extends SearchEvent<T> {
   const CompletedEvent({
     required this.allResults,
     required this.totalDuration,
@@ -113,7 +111,7 @@ class CompletedEvent<T extends SearchResult> extends SearchEvent<T> {
 }
 
 /// Streaming search controller for managing async search operations.
-class StreamingSearchController<T extends SearchResult> {
+class StreamingSearchController<T> {
   final _controller = StreamController<SearchEvent<T>>.broadcast();
   final List<T> _allResults = [];
   bool _isCancelled = false;
@@ -155,13 +153,15 @@ class StreamingSearchController<T extends SearchResult> {
   /// Complete the search.
   void complete(SearchProgress finalProgress) {
     if (_isCancelled) return;
-    _controller.add(CompletedEvent(
-      allResults: _allResults,
-      totalDuration: _startTime != null
-          ? DateTime.now().difference(_startTime!)
-          : Duration.zero,
-      finalProgress: finalProgress,
-    ),);
+    _controller.add(
+      CompletedEvent(
+        allResults: _allResults,
+        totalDuration: _startTime != null
+            ? DateTime.now().difference(_startTime!)
+            : Duration.zero,
+        finalProgress: finalProgress,
+      ),
+    );
     _controller.close();
   }
 
@@ -179,7 +179,6 @@ class StreamingSearchController<T extends SearchResult> {
 
 /// Rate limiter to prevent overwhelming search engines.
 class RateLimiter {
-
   RateLimiter({
     this.maxRequestsPerSecond = 5,
     this.windowDuration = const Duration(seconds: 1),
@@ -234,7 +233,6 @@ class RateLimiter {
 
 /// Retry configuration for failed requests.
 class RetryConfig {
-
   const RetryConfig({
     this.maxRetries = 3,
     this.baseDelay = const Duration(milliseconds: 500),
@@ -242,6 +240,7 @@ class RetryConfig {
     this.exponentialBackoff = true,
     this.retryableStatusCodes = const {408, 429, 500, 502, 503, 504},
   });
+
   /// Maximum number of retry attempts.
   final int maxRetries;
 

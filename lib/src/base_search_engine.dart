@@ -9,16 +9,18 @@ import 'results.dart';
 
 /// Abstract base class for all search-engine backends.
 abstract class BaseSearchEngine<T extends BaseResult> {
-
   BaseSearchEngine({
     String? proxy,
     Duration? timeout,
     bool verify = true,
-  }) : httpClient = HttpClient(
-          proxy: proxy,
-          timeout: timeout,
-          verify: verify,
-        );
+    HttpClient? httpClient,
+  }) : httpClient = httpClient ??
+            HttpClient(
+              proxy: proxy,
+              timeout: timeout,
+              verify: verify,
+            );
+
   /// Unique key, e.g. "google"
   String get name;
 

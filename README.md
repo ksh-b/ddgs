@@ -239,21 +239,30 @@ void close();
 
 ## Testing
 
+## Testing
+
+This package uses a structured test suite separating unit and integration tests.
+
+### Unit Tests
+Run the fast, mocked unit tests:
 ```bash
-# Run all tests
 dart test
+```
 
-# Run with verbose output
-dart test --reporter=expanded
+### Integration Tests
+Integration tests hit real search engine APIs and are skipped by default to prevent flakiness and rate limiting. To run them:
+```bash
+# Run all skipped tests (including integration)
+dart test --run-skipped
 
-# Run with coverage
+# Run specific integration test file
+dart test test/integration/live_search_test.dart --run-skipped
+```
+
+### Coverage
+Generate coverage report:
+```bash
 dart test --coverage=coverage
-
-# Analyze code
-dart analyze
-
-# Format code
-dart format .
 ```
 
 ## Exception Handling

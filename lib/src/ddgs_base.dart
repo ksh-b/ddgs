@@ -2,7 +2,8 @@
 library;
 
 import 'dart:async';
-import 'dart:io';
+import 'platform/platform.dart';
+
 import 'dart:math';
 import 'base_search_engine.dart';
 import 'engines/engines.dart';
@@ -26,15 +27,14 @@ import 'utils.dart';
 /// ddgs.close();
 /// ```
 class DDGS {
-
   DDGS({
     String? proxy,
     Duration? timeout,
     bool verify = true,
     CacheConfig cacheConfig = CacheConfig.disabled,
     int maxRequestsPerSecond = 10,
-  })  : _proxy =
-            expandProxyTbAlias(proxy) ?? Platform.environment['DDGS_PROXY'],
+  })  : _proxy = expandProxyTbAlias(proxy) ??
+            platform.getEnvironmentVariable('DDGS_PROXY'),
         _timeout = timeout ?? const Duration(seconds: 5),
         _verify = verify,
         _cache = cacheConfig.enabled ? ResultCache(cacheConfig) : null,
@@ -242,16 +242,17 @@ class DDGS {
     int? maxResults = 10,
     int page = 1,
     String backend = 'auto',
-  }) => _search(
-      category: 'text',
-      query: query,
-      region: region,
-      safesearch: safesearch,
-      timelimit: timelimit,
-      maxResults: maxResults,
-      page: page,
-      backend: backend,
-    );
+  }) =>
+      _search(
+        category: 'text',
+        query: query,
+        region: region,
+        safesearch: safesearch,
+        timelimit: timelimit,
+        maxResults: maxResults,
+        page: page,
+        backend: backend,
+      );
 
   /// Image search.
   Future<List<Map<String, dynamic>>> images(
@@ -262,16 +263,17 @@ class DDGS {
     int? maxResults = 10,
     int page = 1,
     String backend = 'auto',
-  }) => _search(
-      category: 'images',
-      query: query,
-      region: region,
-      safesearch: safesearch,
-      timelimit: timelimit,
-      maxResults: maxResults,
-      page: page,
-      backend: backend,
-    );
+  }) =>
+      _search(
+        category: 'images',
+        query: query,
+        region: region,
+        safesearch: safesearch,
+        timelimit: timelimit,
+        maxResults: maxResults,
+        page: page,
+        backend: backend,
+      );
 
   /// Video search.
   Future<List<Map<String, dynamic>>> videos(
@@ -282,16 +284,17 @@ class DDGS {
     int? maxResults = 10,
     int page = 1,
     String backend = 'auto',
-  }) => _search(
-      category: 'videos',
-      query: query,
-      region: region,
-      safesearch: safesearch,
-      timelimit: timelimit,
-      maxResults: maxResults,
-      page: page,
-      backend: backend,
-    );
+  }) =>
+      _search(
+        category: 'videos',
+        query: query,
+        region: region,
+        safesearch: safesearch,
+        timelimit: timelimit,
+        maxResults: maxResults,
+        page: page,
+        backend: backend,
+      );
 
   /// News search.
   Future<List<Map<String, dynamic>>> news(
@@ -302,16 +305,17 @@ class DDGS {
     int? maxResults = 10,
     int page = 1,
     String backend = 'auto',
-  }) => _search(
-      category: 'news',
-      query: query,
-      region: region,
-      safesearch: safesearch,
-      timelimit: timelimit,
-      maxResults: maxResults,
-      page: page,
-      backend: backend,
-    );
+  }) =>
+      _search(
+        category: 'news',
+        query: query,
+        region: region,
+        safesearch: safesearch,
+        timelimit: timelimit,
+        maxResults: maxResults,
+        page: page,
+        backend: backend,
+      );
 
   /// Books search.
   Future<List<Map<String, dynamic>>> books(
@@ -321,15 +325,54 @@ class DDGS {
     int? maxResults = 10,
     int page = 1,
     String backend = 'auto',
-  }) => _search(
-      category: 'books',
-      query: query,
-      region: region,
-      safesearch: safesearch,
-      maxResults: maxResults,
-      page: page,
-      backend: backend,
-    );
+  }) =>
+      _search(
+        category: 'books',
+        query: query,
+        region: region,
+        safesearch: safesearch,
+        maxResults: maxResults,
+        page: page,
+        backend: backend,
+      );
+
+  /// Maps search.
+  Future<List<Map<String, dynamic>>> maps(
+    String query, {
+    String region = 'us-en',
+    String safesearch = 'moderate',
+    int? maxResults = 10,
+    int page = 1,
+    String backend = 'auto',
+  }) =>
+      _search(
+        category: 'maps',
+        query: query,
+        region: region,
+        safesearch: safesearch,
+        maxResults: maxResults,
+        page: page,
+        backend: backend,
+      );
+
+  /// Translation search.
+  Future<List<Map<String, dynamic>>> translate(
+    String query, {
+    String region = 'us-en',
+    String safesearch = 'moderate',
+    int? maxResults = 10,
+    int page = 1,
+    String backend = 'auto',
+  }) =>
+      _search(
+        category: 'translations',
+        query: query,
+        region: region,
+        safesearch: safesearch,
+        maxResults: maxResults,
+        page: page,
+        backend: backend,
+      );
 
   // ============================================
   // TYPED SEARCH METHODS (Strongly-Typed Results)
@@ -405,6 +448,38 @@ class DDGS {
     return results.map(NewsSearchResult.fromJson).toList();
   }
 
+  /// Maps search with strongly-typed results.
+  Future<List<MapsResult>> mapsTyped(
+    String query, {
+    SearchOptions options = const SearchOptions(),
+  }) async {
+    final results = await maps(
+      query,
+      region: options.region.code,
+      safesearch: options.safeSearch.code,
+      maxResults: options.maxResults,
+      page: options.page,
+      backend: options.backend,
+    );
+    return results.map(MapsResult.fromJson).toList();
+  }
+
+  /// Translation search with strongly-typed results.
+  Future<List<TranslationResult>> translateTyped(
+    String query, {
+    SearchOptions options = const SearchOptions(),
+  }) async {
+    final results = await translate(
+      query,
+      region: options.region.code,
+      safesearch: options.safeSearch.code,
+      maxResults: options.maxResults,
+      page: options.page,
+      backend: options.backend,
+    );
+    return results.map(TranslationResult.fromJson).toList();
+  }
+
   // ============================================
   // INSTANT ANSWERS & SUGGESTIONS
   // ============================================
@@ -413,13 +488,16 @@ class DDGS {
   ///
   /// Returns structured information like definitions, calculations,
   /// Wikipedia summaries, etc.
-  Future<InstantAnswer?> instantAnswer(String query) => instantAnswerService.getInstantAnswer(query);
+  Future<InstantAnswer?> instantAnswer(String query) =>
+      instantAnswerService.getInstantAnswer(query);
 
   /// Get search suggestions/autocomplete for a query.
-  Future<List<SearchSuggestion>> suggestions(String query) => instantAnswerService.getSuggestions(query);
+  Future<List<SearchSuggestion>> suggestions(String query) =>
+      instantAnswerService.getSuggestions(query);
 
   /// Get spelling correction suggestion for a query.
-  Future<String?> spellingCorrection(String query) => instantAnswerService.getSpellingCorrection(query);
+  Future<String?> spellingCorrection(String query) =>
+      instantAnswerService.getSpellingCorrection(query);
 
   // ============================================
   // ADVANCED SEARCH FEATURES
@@ -463,14 +541,16 @@ class DDGS {
     final results = <String, List<Map<String, dynamic>>>{};
     final manager = ConcurrentSearchManager(maxConcurrency: maxConcurrency);
 
-    final futures = queries.map((query) async => manager.run(() async {
+    final futures = queries.map(
+      (query) async => manager.run(() async {
         final queryResults = await searchWithOptions(
           query,
           category: category,
           options: options,
         );
         return MapEntry(query, queryResults);
-      }),);
+      }),
+    );
 
     final entries = await Future.wait(futures);
     for (final entry in entries) {
@@ -480,8 +560,144 @@ class DDGS {
     return results;
   }
 
+  /// Perform a streaming search.
+  ///
+  /// Returns a stream of [SearchEvent]s which emit results as they arrive
+  /// from different search engines.
+  Stream<SearchEvent<BaseResult>> streamSearch(
+    String query, {
+    String category = 'text',
+    SearchOptions options = const SearchOptions(),
+  }) {
+    final controller = StreamingSearchController<BaseResult>();
+
+    // Start search in background
+    _streamSearch(
+      controller: controller,
+      category: category,
+      query: query,
+      options: options,
+    );
+
+    return controller.stream;
+  }
+
+  Future<void> _streamSearch({
+    required StreamingSearchController<BaseResult> controller,
+    required String category,
+    required String query,
+    required SearchOptions options,
+  }) async {
+    controller.start();
+
+    try {
+      if (query.isEmpty) {
+        throw DDGSException('query is mandatory.');
+      }
+
+      final enginesList = _getEngines(category, options.backend);
+      final uniqueProviders = enginesList.map((e) => e.provider).toSet();
+      final seenProviders = <String>{};
+
+      final maxWorkers = options.maxResults != null
+          ? min(uniqueProviders.length, (options.maxResults! / 10).ceil() + 1)
+          : uniqueProviders.length;
+
+      controller.updateProgress(SearchProgress(
+        enginesQueried: 0,
+        totalEngines: min(enginesList.length, maxWorkers),
+        resultsFound: 0,
+      ));
+
+      final futures = <Future<void>>[];
+      var workersStarted = 0;
+      var resultsFound = 0;
+      final completedEngines = <String>[];
+      final failedEngines = <String>[];
+
+      for (final engine in enginesList) {
+        if (seenProviders.contains(engine.provider) || controller.isCancelled) {
+          continue;
+        }
+
+        if (workersStarted >= maxWorkers) break;
+
+        workersStarted++;
+        final future = (() async {
+          final stopwatch = Stopwatch()..start();
+          try {
+            // Rate limiting check could go here if exposed
+
+            final results = await engine
+                .search(
+                  query: query,
+                  region: options.region.code,
+                  safesearch: options.safeSearch.code,
+                  timelimit: options.timeLimit.code,
+                  page: options.page,
+                )
+                .timeout(_timeout);
+
+            if (controller.isCancelled) return;
+
+            if (results != null && results.isNotEmpty) {
+              // Add results
+              controller.addResults(SearchResultChunk(
+                results: results,
+                engine: engine.name,
+                fetchDuration: stopwatch.elapsed,
+                totalResultsSoFar: resultsFound + results.length,
+              ));
+
+              resultsFound += results.length;
+              seenProviders.add(engine.provider);
+            }
+
+            completedEngines.add(engine.name);
+          } catch (e) {
+            if (!controller.isCancelled) {
+              controller.addError(engine.name, e.toString());
+              failedEngines.add(engine.name);
+            }
+          } finally {
+            if (!controller.isCancelled) {
+              controller.updateProgress(SearchProgress(
+                enginesQueried: completedEngines.length + failedEngines.length,
+                totalEngines: workersStarted,
+                resultsFound: resultsFound,
+                completedEngines: completedEngines,
+                failedEngines: failedEngines,
+              ));
+            }
+          }
+        })();
+
+        futures.add(future);
+      }
+
+      await Future.wait(futures);
+
+      if (!controller.isCancelled) {
+        controller.complete(SearchProgress(
+          enginesQueried: workersStarted,
+          totalEngines: workersStarted,
+          resultsFound: resultsFound,
+          completedEngines: completedEngines,
+          failedEngines: failedEngines,
+          status: 'Completed',
+        ));
+      }
+    } catch (e) {
+      if (!controller.isCancelled) {
+        controller.addError('system', e.toString());
+        controller.cancel(); // Or complete with error?
+      }
+    }
+  }
+
   /// Get all available search engines for a category.
-  List<String> getAvailableEnginesFor(String category) => engines[category]?.keys.toList() ?? [];
+  List<String> getAvailableEnginesFor(String category) =>
+      engines[category]?.keys.toList() ?? [];
 
   /// Get cache statistics (if caching is enabled).
   CacheStats? get cacheStats => _cache?.stats;
@@ -499,4 +715,3 @@ class DDGS {
     _rateLimiter.reset();
   }
 }
-
