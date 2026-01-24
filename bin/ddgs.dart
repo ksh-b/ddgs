@@ -27,7 +27,7 @@ void main(List<String> arguments) async {
     'news',
     'books',
     'maps',
-    'translate'
+    'translate',
   ]) {
     parser.commands[cmd]!
       ..addOption('query', abbr: 'q', help: 'Search query', mandatory: true)

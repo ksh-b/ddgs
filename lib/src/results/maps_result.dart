@@ -46,39 +46,35 @@ class MapsResult extends BaseResult {
   }) : body = body ?? '';
 
   /// Create a [MapsResult] from JSON data.
-  factory MapsResult.fromJson(Map<String, dynamic> json) {
-    return MapsResult(
-      title: json['title'] as String? ?? 'No Title',
-      href: json['url'] as String? ?? '',
-      body: json['address']
-          as String?, // Map body often to address if description missing
-      address: json['address'] as String? ?? '',
-      latitude: json['latitude'] is String
-          ? double.tryParse(json['latitude'] as String)
-          : (json['latitude'] as num?)?.toDouble(),
-      longitude: json['longitude'] is String
-          ? double.tryParse(json['longitude'] as String)
-          : (json['longitude'] as num?)?.toDouble(),
-      source: json['source'] as String?,
-      description: json['description'] as String?,
-      phone: json['phone'] as String?,
-      hours: json['hours'] as String?,
-    );
-  }
+  factory MapsResult.fromJson(Map<String, dynamic> json) => MapsResult(
+        title: json['title'] as String? ?? 'No Title',
+        href: json['url'] as String? ?? '',
+        body: json['address']
+            as String?, // Map body often to address if description missing
+        address: json['address'] as String? ?? '',
+        latitude: json['latitude'] is String
+            ? double.tryParse(json['latitude'] as String)
+            : (json['latitude'] as num?)?.toDouble(),
+        longitude: json['longitude'] is String
+            ? double.tryParse(json['longitude'] as String)
+            : (json['longitude'] as num?)?.toDouble(),
+        source: json['source'] as String?,
+        description: json['description'] as String?,
+        phone: json['phone'] as String?,
+        hours: json['hours'] as String?,
+      );
 
   @override
-  Map<String, dynamic> toJson() {
-    return {
-      'title': title,
-      'href': href,
-      'body': body,
-      'address': address,
-      'latitude': latitude,
-      'longitude': longitude,
-      'source': source,
-      'description': description,
-      'phone': phone,
-      'hours': hours,
-    };
-  }
+  Map<String, dynamic> toJson() => {
+        'title': title,
+        'href': href,
+        'body': body,
+        'address': address,
+        'latitude': latitude,
+        'longitude': longitude,
+        'source': source,
+        'description': description,
+        'phone': phone,
+        'hours': hours,
+      };
 }

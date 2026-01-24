@@ -2,14 +2,14 @@
 library;
 
 import 'dart:async';
-import 'platform/platform.dart';
-
 import 'dart:math';
+
 import 'base_search_engine.dart';
 import 'engines/engines.dart';
 import 'exceptions.dart';
 import 'instant_answers.dart';
 import 'parallel_search.dart';
+import 'platform/platform.dart';
 import 'results.dart';
 import 'search_options.dart';
 import 'search_result.dart';
@@ -599,9 +599,8 @@ class DDGS {
       final uniqueProviders = enginesList.map((e) => e.provider).toSet();
       final seenProviders = <String>{};
 
-      final maxWorkers = options.maxResults != null
-          ? min(uniqueProviders.length, (options.maxResults! / 10).ceil() + 1)
-          : uniqueProviders.length;
+      final maxWorkers =
+          min(uniqueProviders.length, (options.maxResults / 10).ceil() + 1);
 
       controller.updateProgress(SearchProgress(
         enginesQueried: 0,

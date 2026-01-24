@@ -33,26 +33,23 @@ class TranslationResult extends BaseResult {
         body = translatedText;
 
   /// Create a [TranslationResult] from JSON data.
-  factory TranslationResult.fromJson(Map<String, dynamic> json) {
-    return TranslationResult(
-      detectedLanguage: json['detected_language'] as String? ?? 'auto',
-      translatedText: json['translated_text'] as String? ?? '',
-      sourceText: json['source_text'] as String? ?? '',
-      targetLanguage: json['target_language'] as String? ?? '',
-      href: json['url'] as String? ?? '',
-    );
-  }
+  factory TranslationResult.fromJson(Map<String, dynamic> json) =>
+      TranslationResult(
+        detectedLanguage: json['detected_language'] as String? ?? 'auto',
+        translatedText: json['translated_text'] as String? ?? '',
+        sourceText: json['source_text'] as String? ?? '',
+        targetLanguage: json['target_language'] as String? ?? '',
+        href: json['url'] as String? ?? '',
+      );
 
   @override
-  Map<String, dynamic> toJson() {
-    return {
-      'detected_language': detectedLanguage,
-      'translated_text': translatedText,
-      'source_text': sourceText,
-      'target_language': targetLanguage,
-      'title': title,
-      'body': body,
-      'url': href,
-    };
-  }
+  Map<String, dynamic> toJson() => {
+        'detected_language': detectedLanguage,
+        'translated_text': translatedText,
+        'source_text': sourceText,
+        'target_language': targetLanguage,
+        'title': title,
+        'body': body,
+        'url': href,
+      };
 }
