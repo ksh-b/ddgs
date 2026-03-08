@@ -252,9 +252,10 @@ class InstantAnswerService {
       final data = jsonDecode(response.body);
       final suggestions = <SearchSuggestion>[];
 
-      if (data is List) {
-        for (var i = 0; i < data.length && i < 10; i++) {
-          final item = data[i];
+      if (data is List && data.length > 1) {
+        final innerList = data[1] as List;
+        for (var i = 0; i < innerList.length && i < 10; i++) {
+          final item = data[1][i];
           if (item is Map<String, dynamic>) {
             final phrase = item['phrase'] as String? ?? '';
             if (phrase.isNotEmpty) {
