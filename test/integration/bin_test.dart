@@ -316,6 +316,8 @@ Future<void> testSuggestions(DDGS ddgs) async {
     final suggestions = await ddgs.suggestions('dart');
     
     print('Found ${suggestions.length} suggestions:\n');
+    assert(suggestions.length>1);
+
     for (var i = 0; i < suggestions.length && i < 5; i++) {
       final suggestion = suggestions[i];
       print('  ${i + 1}. ${suggestion.suggestion}');

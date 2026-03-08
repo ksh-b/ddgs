@@ -255,7 +255,7 @@ class InstantAnswerService {
       if (data is List && data.length > 1) {
         final innerList = data[1] as List;
         for (var i = 0; i < innerList.length && i < 10; i++) {
-          final item = data[1][i];
+          final item = innerList[i];
           if (item is Map<String, dynamic>) {
             final phrase = item['phrase'] as String? ?? '';
             if (phrase.isNotEmpty) {
